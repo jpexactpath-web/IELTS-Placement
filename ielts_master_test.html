@@ -283,6 +283,30 @@ tbody tr:nth-child(even) td{background:#f9f9f9;}
 </head>
 <body>
 
+<button onclick="testJSPDF()" style="position:fixed;top:10px;right:10px;z-index:999;padding:10px;background:red;color:white;">TEST PDF</button>
+
+<script>
+function testJSPDF() {
+  console.log('Testing jsPDF...');
+  console.log('window.jspdf:', window.jspdf);
+  
+  if (typeof window.jspdf === 'undefined') {
+    alert('ERROR: jsPDF library not loaded!');
+    return;
+  }
+  
+  try {
+    var testDoc = new window.jspdf.jsPDF();
+    testDoc.text("Test", 10, 10);
+    testDoc.save("test.pdf");
+    alert('SUCCESS! jsPDF is working. The problem is elsewhere.');
+  } catch (e) {
+    alert('ERROR: ' + e.message);
+    console.error(e);
+  }
+}
+</script>
+
 <!-- ══ TOP BAR ═══════════════════════════════════════════════════════════════ -->
 <div class="top-bar">
   <div class="student-row">
