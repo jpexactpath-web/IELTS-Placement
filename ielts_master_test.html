@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS Placement Test</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ══ RESET & BASE ══════════════════════════════════════════════════════════ */
+:root {
+  --black:#111111; --mid:#444444; --light:#888888;
+  --border:#cccccc; --bg:#ffffff;
+  --warn:#b94a00; --green:#2a6e2a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--black);
+  font-family:'Book Antiqua','Palatino Linotype',Palatino,Georgia,serif;
+  font-size:12pt;
+  line-height:1.7;
+}
+
+/* ══ TOP BAR ══════════════════════════════════════════════════════════════ */
+.top-bar{
+  position:sticky;top:0;z-index:100;
+  background:#fff;
+  border-bottom:2px solid var(--black);
+  padding:0;
+}
+.student-row{
+  display:flex;align-items:center;gap:20px;
+  padding:10px 48px;
+  border-bottom:1px solid var(--border);
+  background:#fafafa;
+  font-size:10.5pt;
+}
+.student-row label{color:var(--mid);margin-right:4px;}
+.student-field{
+  border:none;border-bottom:1.5px solid var(--black);
+  background:transparent;
+  font-family:inherit;font-size:10.5pt;
+  padding:2px 6px;outline:none;color:var(--black);
+  width:180px;
+}
+.student-field:focus{background:#f5f5f5;}
+
+.section-nav{
+  display:flex;align-items:stretch;
+  padding:0 48px;
+}
+.nav-tab{
+  padding:10px 22px;
+  font-family:inherit;font-size:10pt;
+  letter-spacing:0.05em;text-transform:uppercase;
+  border:none;background:transparent;
+  cursor:pointer;color:var(--mid);
+  border-bottom:3px solid transparent;
+  transition:all 0.15s;
+}
+.nav-tab:hover{color:var(--black);}
+.nav-tab.active{color:var(--black);border-bottom-color:var(--black);font-weight:bold;}
+.nav-tab.completed{color:var(--green);}
+
+.timer-wrap{
+  margin-left:auto;display:flex;align-items:center;gap:14px;
+  padding:6px 0;
+}
+.timer-label{font-size:8.5pt;color:var(--light);letter-spacing:0.08em;text-transform:uppercase;}
+.timer-display{
+  font-family:'Courier New',Courier,monospace;
+  font-size:18pt;font-weight:bold;
+  color:var(--black);letter-spacing:0.04em;
+}
+.timer-display.warning{color:var(--warn);}
+.timer-btns{display:flex;gap:4px;}
+.btn-t{
+  font-family:inherit;font-size:8pt;
+  padding:3px 8px;border:1px solid var(--border);
+  background:transparent;cursor:pointer;
+  text-transform:uppercase;color:var(--mid);
+}
+.btn-t:hover{border-color:var(--black);color:var(--black);}
+
+/* ══ PAGE ══════════════════════════════════════════════════════════════════ */
+.page-wrapper{max-width:900px;margin:0 auto;padding:36px 48px 80px;}
+
+/* ══ SECTIONS ══════════════════════════════════════════════════════════════ */
+.test-section{display:none;}
+.test-section.active{display:block;}
+
+.section-heading{
+  border-top:3px solid var(--black);
+  border-bottom:1px solid var(--black);
+  padding:16px 0 12px;
+  margin-bottom:28px;
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.section-heading h2{font-size:17pt;font-weight:normal;text-transform:uppercase;letter-spacing:0.04em;}
+.section-heading span{font-size:10pt;color:var(--mid);}
+
+.instructions{
+  border:1px solid var(--border);background:#fafafa;
+  padding:13px 18px;margin-bottom:32px;
+  font-size:11pt;color:var(--mid);font-style:italic;
+}
+
+/* ══ AUDIO ═════════════════════════════════════════════════════════════════ */
+.audio-block{
+  background:#fafafa;border:1px solid var(--border);
+  padding:16px 20px;margin-bottom:32px;
+}
+.audio-block p{font-size:10pt;color:var(--mid);margin-bottom:9px;font-style:italic;}
+.audio-block .note{font-size:9.5pt;color:var(--warn);font-weight:bold;margin-top:8px;}
+audio{width:100%;height:36px;}
+
+/* ══ Q GROUP ═══════════════════════════════════════════════════════════════ */
+.q-group{margin-bottom:30px;}
+.q-group-title{font-weight:bold;margin-bottom:4px;}
+.q-group-instr{margin-bottom:14px;color:var(--mid);font-style:italic;font-size:11pt;}
+.q-group-sub{font-size:11pt;margin-bottom:14px;line-height:1.6;}
+
+/* ══ TABLES ════════════════════════════════════════════════════════════════ */
+table{width:100%;border-collapse:collapse;margin-bottom:22px;font-size:11.5pt;}
+thead th{font-weight:bold;background:#f0f0f0;padding:8px 10px;border:1px solid var(--border);text-align:left;}
+tbody td{padding:8px 10px;border:1px solid var(--border);vertical-align:top;}
+tbody tr:nth-child(even) td{background:#f9f9f9;}
+
+/* ══ INPUTS ════════════════════════════════════════════════════════════════ */
+.ii{
+  border:none;border-bottom:1.5px solid var(--black);
+  background:transparent;font-family:inherit;font-size:12pt;
+  width:130px;padding:2px 4px;outline:none;color:var(--black);
+  display:inline-block;vertical-align:middle;
+}
+.ii:focus{background:#f5f5f5;}
+.ii.sm{width:55px;text-align:center;text-transform:uppercase;}
+.ii.md{width:170px;}
+
+.flowchart{border:1px solid var(--border);padding:18px 22px;margin-bottom:18px;background:#fafafa;}
+.flowchart h3{font-size:12pt;font-weight:bold;margin-bottom:12px;text-decoration:underline;}
+.flow-step{margin-bottom:12px;line-height:1.8;}
+
+.cb-group{margin-bottom:20px;}
+.cb-title{font-weight:bold;margin-bottom:9px;}
+.cb-opt{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;cursor:pointer;}
+.cb-opt input[type=checkbox]{margin-top:3px;width:14px;height:14px;flex-shrink:0;cursor:pointer;}
+.cb-opt .ol{font-weight:bold;min-width:14px;}
+
+.a-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.a-row label{font-weight:bold;min-width:36px;}
+
+.sent-item{margin-bottom:13px;line-height:1.9;}
+.sent-item .qn{font-weight:bold;margin-right:4px;}
+
+.opts{margin:8px 0 14px;}
+.opts .opt{margin-bottom:4px;}
+.opts .opt strong{font-weight:bold;margin-right:4px;}
+.opts-2col{column-count:2;column-gap:28px;}
+
+/* ══ PASSAGE ════════════════════════════════════════════════════════════════ */
+.passage-label{font-size:10pt;letter-spacing:0.1em;text-transform:uppercase;color:var(--light);margin-bottom:4px;}
+.passage-title{font-size:15pt;font-weight:bold;margin-bottom:16px;padding-bottom:9px;border-bottom:2px solid var(--black);}
+.passage-body{
+  background:#fafafa;border:1px solid var(--border);border-left:4px solid var(--black);
+  padding:22px 26px;margin-bottom:28px;font-size:11.5pt;line-height:1.8;
+}
+.passage-body p{margin-bottom:13px;}
+.passage-body p:last-child{margin-bottom:0;}
+.para-lbl{font-weight:bold;margin-right:6px;}
+
+.q-hdr{
+  background:#f0f0f0;border-left:4px solid var(--black);
+  padding:9px 13px;margin-bottom:14px;
+}
+.q-hdr h3{font-size:12pt;font-weight:bold;}
+
+/* ══ TFNG ══════════════════════════════════════════════════════════════════ */
+.tfng-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;padding:7px 9px;border:1px solid transparent;}
+.tfng-row:hover{background:#f5f5f5;}
+.tfng-row .qn{font-weight:bold;min-width:22px;padding-top:2px;}
+.tfng-row .qt{flex:1;}
+.tfng-opts{display:flex;gap:3px;flex-shrink:0;}
+.tfng-opts label{
+  display:flex;align-items:center;gap:3px;
+  padding:3px 9px;border:1px solid var(--border);
+  cursor:pointer;font-size:10pt;white-space:nowrap;user-select:none;
+}
+.tfng-opts label:hover{background:#f0f0f0;border-color:var(--black);}
+.tfng-opts input[type=radio]{display:none;}
+.tfng-opts label:has(input:checked){background:var(--black);color:#fff;border-color:var(--black);}
+
+/* ══ MC ════════════════════════════════════════════════════════════════════ */
+.mc-item{margin-bottom:16px;padding:9px 11px;border:1px solid transparent;}
+.mc-item:hover{background:#f5f5f5;}
+.mc-q{display:flex;gap:10px;margin-bottom:9px;}
+.mc-opts{display:flex;flex-direction:column;gap:5px;padding-left:30px;}
+.mc-opt{display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:11.5pt;}
+.mc-opt input[type=radio]{display:none;}
+.oc{width:20px;height:20px;border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:9pt;font-weight:bold;color:var(--mid);}
+.mc-opt:hover .oc{border-color:var(--black);color:var(--black);}
+.mc-opt:has(input:checked) .oc{background:var(--black);border-color:var(--black);color:#fff;}
+
+/* ══ CLASSIFY ══════════════════════════════════════════════════════════════ */
+.cl-key{display:flex;gap:18px;margin-bottom:12px;font-size:11pt;}
+.cl-key span{font-weight:bold;}
+.cl-row{display:flex;align-items:center;gap:12px;margin-bottom:9px;padding:5px 9px;}
+.cl-row:hover{background:#f5f5f5;}
+.cl-opts{display:flex;gap:3px;flex-shrink:0;}
+.cl-opts label{
+  display:flex;align-items:center;justify-content:center;
+  width:32px;height:28px;border:1px solid var(--border);
+  cursor:pointer;font-size:10.5pt;font-weight:bold;user-select:none;
+}
+.cl-opts label:hover{background:#f0f0f0;border-color:var(--black);}
+.cl-opts input[type=radio]{display:none;}
+.cl-opts label:has(input:checked){background:var(--black);color:#fff;border-color:var(--black);}
+
+.pm-row{display:flex;align-items:center;gap:12px;margin-bottom:11px;padding:5px 9px;}
+.pm-row:hover{background:#f5f5f5;}
+
+.summ-box{border:1px solid var(--border);padding:18px 22px;background:#fafafa;margin-bottom:10px;font-size:11.5pt;line-height:2.1;}
+
+/* ══ WRITING ════════════════════════════════════════════════════════════════ */
+.task-block{margin-bottom:48px;}
+.task-hdr{border-bottom:2px solid var(--black);padding-bottom:9px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:baseline;}
+.task-hdr h3{font-size:13pt;font-weight:bold;}
+.task-meta{font-size:10pt;color:var(--light);}
+.task-prompt{background:#fafafa;border:1px solid var(--border);border-left:4px solid var(--black);padding:16px 20px;margin-bottom:20px;font-size:11.5pt;line-height:1.75;}
+.task-prompt p{margin-bottom:9px;}.task-prompt p:last-child{margin-bottom:0;}
+.wc-bar{display:flex;justify-content:space-between;align-items:center;font-size:10pt;color:var(--mid);margin-bottom:7px;}
+.wc-num{font-weight:bold;color:var(--black);}
+.wc-num.below{color:var(--warn);}
+.wc-num.met{color:var(--green);}
+.w-area{
+  width:100%;border:1.5px solid var(--border);background:#fff;
+  font-family:'Book Antiqua','Palatino Linotype',Palatino,Georgia,serif;
+  font-size:12pt;line-height:2;
+  padding:14px 16px;resize:vertical;outline:none;color:var(--black);
+  background-image:repeating-linear-gradient(to bottom,transparent,transparent calc(2em - 1px),#e5e5e5 calc(2em - 1px),#e5e5e5 2em);
+  background-attachment:local;
+}
+.w-area:focus{border-color:var(--black);}
+.w-note{font-size:10pt;color:var(--light);margin-top:5px;font-style:italic;}
+
+/* ══ DIVIDERS ══════════════════════════════════════════════════════════════ */
+.sec-div{border:none;border-top:1px dashed var(--border);margin:34px 0;}
+.pass-div{border:none;border-top:2px solid var(--black);margin:48px 0;}
+.task-div{border:none;border-top:1px dashed var(--border);margin:44px 0;}
+
+.sec-footer{
+  margin-top:40px;padding-top:20px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:10px;
+}
+
+.submit-bar{
+  margin-top:50px;padding-top:22px;border-top:2px solid var(--black);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.submit-bar-left{font-size:10pt;color:var(--mid);font-style:italic;}
+
+.btn{
+  font-family:inherit;font-size:11pt;padding:10px 26px;
+  cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;
+}
+.btn-primary{background:var(--black);color:#fff;border:none;}
+.btn-primary:hover{background:#333;}
+.btn-secondary{background:transparent;color:var(--mid);border:1px solid var(--border);}
+.btn-secondary:hover{border-color:var(--black);color:var(--black);}
+.btn-nav{background:var(--black);color:#fff;border:none;font-size:10.5pt;padding:9px 22px;}
+.btn-nav:hover{background:#333;}
+
+@media print{
+  body{font-size:10.5pt;}
+  .top-bar,.sec-footer,.submit-bar,.audio-block{display:none!important;}
+  .test-section{display:block!important;}
+  .page-wrapper{padding:16px 24px;max-width:100%;}
+  .pass-div{page-break-before:always;}
+  .w-area{border:none;border-bottom:1px solid #ccc;background:#fff;resize:none;}
+  .tfng-opts label:has(input:checked){background:#000!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .cl-opts label:has(input:checked){background:#000!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .mc-opt:has(input:checked) .oc{background:#000!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOP BAR ═══════════════════════════════════════════════════════════════ -->
+<div class="top-bar">
+  <div class="student-row">
+    <div><label>Student Name:</label><input class="student-field" id="sName" type="text" autocomplete="off" placeholder="Full name"></div>
+    <div><label>Student ID:</label><input class="student-field" id="sID" type="text" autocomplete="off" placeholder="ID / Number" style="width:120px"></div>
+    <div><label>Date:</label><input class="student-field" id="sDate" type="date" style="width:150px"></div>
+  </div>
+  <div class="section-nav">
+    <button class="nav-tab active" id="tab1" onclick="goSection(1)">Section 1: Listening</button>
+    <button class="nav-tab" id="tab2" onclick="goSection(2)">Section 2: Reading</button>
+    <button class="nav-tab" id="tab3" onclick="goSection(3)">Section 3: Writing</button>
+    <div class="timer-wrap">
+      <span class="timer-label" id="timerLabel">40:00</span>
+      <span class="timer-display" id="timerDisplay">40:00</span>
+      <div class="timer-btns">
+        <button class="btn-t" id="btnStart" onclick="startTimer()">Start</button>
+        <button class="btn-t" id="btnPause" onclick="pauseTimer()" style="display:none">Pause</button>
+        <button class="btn-t" onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SECTION 1: LISTENING
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="test-section active" id="sec1">
+<div class="page-wrapper">
+
+  <div class="section-heading">
+    <h2>Section 1 &mdash; Listening</h2>
+    <span>40 minutes &nbsp;|&nbsp; 40 Questions</span>
+  </div>
+
+  <div class="audio-block">
+    <p>Listen to the recording and answer all questions. You will hear each section once.</p>
+    <audio id="audioPlayer" controls preload="auto">
+      <source src="AUDIO_URL_PLACEHOLDER" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+    <p class="note">Note: Update the audio URL in the HTML file before distributing this test.</p>
+  </div>
+
+  <!-- Q1-5 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 1&ndash;5</p>
+    <p class="q-group-instr">Complete the table below using <strong>NO MORE THAN TWO WORDS AND/OR A NUMBER</strong> for each answer.</p>
+    <table>
+      <thead><tr><th>Name of library</th><th>Location</th><th>Opening times</th><th>Other information</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Bailey Library</td>
+          <td>Parkville campus</td>
+          <td>8.30 am to (1)&nbsp;<input class="ii" id="L1" type="text" maxlength="30" autocomplete="off">&nbsp;pm weekdays</td>
+          <td>Popular with students</td>
+        </tr>
+        <tr>
+          <td>Brown Library</td>
+          <td>Near Stratton Street and (2)&nbsp;<input class="ii" id="L2" type="text" maxlength="30" autocomplete="off"></td>
+          <td>7 am to 2 am daily</td>
+          <td>Open to (3)&nbsp;<input class="ii" id="L3" type="text" maxlength="30" autocomplete="off">&nbsp;students only</td>
+        </tr>
+        <tr>
+          <td>RMIT Library</td>
+          <td>Level 5, building 8, (4)&nbsp;<input class="ii" id="L4" type="text" maxlength="30" autocomplete="off">&nbsp;Swan Street</td>
+          <td>10 am &ndash; 12 midnight Mon&ndash;Fri<br>10 am &ndash; (5)&nbsp;<input class="ii" id="L5" type="text" maxlength="30" autocomplete="off">&nbsp;pm Sat &amp; Sun</td>
+          <td>Good internet facilities</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Q6-10 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 6&ndash;10</p>
+    <p class="q-group-instr">Complete the flow chart below. Write <strong>NO MORE THAN ONE WORD</strong> for each answer.</p>
+    <div class="flowchart">
+      <h3>Process of booking a computer</h3>
+      <div class="flow-step"><strong>Step 1:</strong> log in to (6)&nbsp;<input class="ii" id="L6" type="text" maxlength="30" autocomplete="off">&nbsp;using your student number and (7)&nbsp;<input class="ii" id="L7" type="text" maxlength="30" autocomplete="off"></div>
+      <div class="flow-step"><strong>Step 2:</strong> choose the resource type you would like to use</div>
+      <div class="flow-step"><strong>Step 3:</strong> select (8)&nbsp;<input class="ii" id="L8" type="text" maxlength="30" autocomplete="off">&nbsp;of computer</div>
+      <div class="flow-step"><strong>Step 4:</strong> select date of booking using (9)&nbsp;<input class="ii" id="L9" type="text" maxlength="30" autocomplete="off">&nbsp;options</div>
+      <div class="flow-step"><strong>Step 5:</strong> complete your booking. Your name should appear on the booking (10)&nbsp;<input class="ii" id="L10" type="text" maxlength="30" autocomplete="off"></div>
+    </div>
+  </div>
+
+  <hr class="sec-div">
+
+  <!-- Q11-14 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 11&ndash;14</p>
+    <p class="q-group-instr">Choose <strong>TWO</strong> answers for each question.</p>
+
+    <div class="cb-group">
+      <p class="cb-title">11. Doors Open</p>
+      <label class="cb-opt"><input type="checkbox" name="L11" value="A"><span class="ol">A</span> is an annual event</label>
+      <label class="cb-opt"><input type="checkbox" name="L11" value="B"><span class="ol">B</span> lasts for one week</label>
+      <label class="cb-opt"><input type="checkbox" name="L11" value="C"><span class="ol">C</span> is a free event</label>
+      <label class="cb-opt"><input type="checkbox" name="L11" value="D"><span class="ol">D</span> happens in spring</label>
+      <label class="cb-opt"><input type="checkbox" name="L11" value="E"><span class="ol">E</span> is more than 100 years old</label>
+    </div>
+    <div class="cb-group">
+      <p class="cb-title">12. The Observatory</p>
+      <label class="cb-opt"><input type="checkbox" name="L12" value="A"><span class="ol">A</span> is situated in Edinburgh</label>
+      <label class="cb-opt"><input type="checkbox" name="L12" value="B"><span class="ol">B</span> was built 20 years ago</label>
+      <label class="cb-opt"><input type="checkbox" name="L12" value="C"><span class="ol">C</span> regularly participates in the Doors Open event</label>
+      <label class="cb-opt"><input type="checkbox" name="L12" value="D"><span class="ol">D</span> is 120 years old</label>
+      <label class="cb-opt"><input type="checkbox" name="L12" value="E"><span class="ol">E</span> is open to visitors every day of the year</label>
+    </div>
+    <div class="cb-group">
+      <p class="cb-title">13. Planetarium Shows</p>
+      <label class="cb-opt"><input type="checkbox" name="L13" value="A"><span class="ol">A</span> take place twice a day</label>
+      <label class="cb-opt"><input type="checkbox" name="L13" value="B"><span class="ol">B</span> are more popular on Saturday</label>
+      <label class="cb-opt"><input type="checkbox" name="L13" value="C"><span class="ol">C</span> run on Saturday and Sunday</label>
+      <label class="cb-opt"><input type="checkbox" name="L13" value="D"><span class="ol">D</span> run four times a day</label>
+      <label class="cb-opt"><input type="checkbox" name="L13" value="E"><span class="ol">E</span> finish at half past ten</label>
+    </div>
+    <div class="cb-group">
+      <p class="cb-title">14. All tickets</p>
+      <label class="cb-opt"><input type="checkbox" name="L14" value="A"><span class="ol">A</span> must be booked in advance</label>
+      <label class="cb-opt"><input type="checkbox" name="L14" value="B"><span class="ol">B</span> are already sold out</label>
+      <label class="cb-opt"><input type="checkbox" name="L14" value="C"><span class="ol">C</span> are on sale at the information point</label>
+      <label class="cb-opt"><input type="checkbox" name="L14" value="D"><span class="ol">D</span> must be booked online</label>
+      <label class="cb-opt"><input type="checkbox" name="L14" value="E"><span class="ol">E</span> are available from midday</label>
+    </div>
+  </div>
+
+  <!-- Q15-20 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 15&ndash;20</p>
+    <p class="q-group-instr">Complete the sentences using <strong>NO MORE THAN TWO WORDS</strong> for each answer.</p>
+    <div class="sent-item"><span class="qn">15.</span> The tour of the telescope dome includes access to the <input class="ii md" id="L15" type="text" maxlength="40" autocomplete="off"> of the building.</div>
+    <div class="sent-item"><span class="qn">16.</span> Tour participants are advised to have suitable <input class="ii md" id="L16" type="text" maxlength="40" autocomplete="off">.</div>
+    <div class="sent-item"><span class="qn">17.</span> Visitors to the Crawford Collection can see items from the astronomical <input class="ii md" id="L17" type="text" maxlength="40" autocomplete="off"> on display.</div>
+    <div class="sent-item"><span class="qn">18.</span> The children&rsquo;s craft workshops take place in the <input class="ii md" id="L18" type="text" maxlength="40" autocomplete="off">.</div>
+    <div class="sent-item"><span class="qn">19.</span> During the craft workshops children can construct a model of a <input class="ii md" id="L19" type="text" maxlength="40" autocomplete="off">.</div>
+    <div class="sent-item"><span class="qn">20.</span> Children also have the opportunity to colour a <input class="ii md" id="L20" type="text" maxlength="40" autocomplete="off">.</div>
+  </div>
+
+  <hr class="sec-div">
+
+  <!-- Q21-23 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 21&ndash;23</p>
+    <p class="q-group-instr">Choose <strong>THREE</strong> letters A&ndash;G. Which THREE examples of space junk are mentioned by the speaker?</p>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+      <div class="a-row"><label>(21)</label><input class="ii sm" id="L21" type="text" maxlength="2" autocomplete="off"></div>
+      <div class="a-row"><label>(22)</label><input class="ii sm" id="L22" type="text" maxlength="2" autocomplete="off"></div>
+      <div class="a-row"><label>(23)</label><input class="ii sm" id="L23" type="text" maxlength="2" autocomplete="off"></div>
+    </div>
+    <div class="opts opts-2col">
+      <div class="opt"><strong>A</strong> cans</div><div class="opt"><strong>B</strong> cooling tanks</div>
+      <div class="opt"><strong>C</strong> metal plates</div><div class="opt"><strong>D</strong> metal screws</div>
+      <div class="opt"><strong>E</strong> paint</div><div class="opt"><strong>F</strong> satellites</div>
+      <div class="opt"><strong>G</strong> whole rackets</div>
+    </div>
+  </div>
+
+  <!-- Q24-26 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 24&ndash;26</p>
+    <p class="q-group-instr">Which country is responsible for depositing the following percentages of space junk? Write the correct letter A&ndash;E.</p>
+    <div style="margin-bottom:14px;">
+      <div class="a-row"><label>(24) 28%</label><input class="ii sm" id="L24" type="text" maxlength="2" autocomplete="off"></div>
+      <div class="a-row"><label>(25) 29%</label><input class="ii sm" id="L25" type="text" maxlength="2" autocomplete="off"></div>
+      <div class="a-row"><label>(26) 37%</label><input class="ii sm" id="L26" type="text" maxlength="2" autocomplete="off"></div>
+    </div>
+    <div class="opts opts-2col">
+      <div class="opt"><strong>A</strong> China</div><div class="opt"><strong>B</strong> Europe</div>
+      <div class="opt"><strong>C</strong> India</div><div class="opt"><strong>D</strong> Russia</div>
+      <div class="opt"><strong>E</strong> United States</div>
+    </div>
+  </div>
+
+  <!-- Q27-30 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 27&ndash;30</p>
+    <p class="q-group-instr">Complete the table. Write the appropriate letter A&ndash;I next to questions 27&ndash;30.</p>
+    <table>
+      <thead><tr><th>Name of Satellite</th><th>Country of origin</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>UARS</td><td>United States</td><td>- Size and weight of (27)&nbsp;<input class="ii sm" id="L27" type="text" maxlength="2" autocomplete="off"><br>- Was in space for two decades</td></tr>
+        <tr><td>Skylab</td><td>United States</td><td>- Ended up in (28)&nbsp;<input class="ii sm" id="L28" type="text" maxlength="2" autocomplete="off"><br>- Weight of (29)&nbsp;<input class="ii sm" id="L29" type="text" maxlength="2" autocomplete="off"></td></tr>
+        <tr><td>Mir</td><td>Russia</td><td>- Larger than UARS<br>- Ended up in (30)&nbsp;<input class="ii sm" id="L30" type="text" maxlength="2" autocomplete="off"></td></tr>
+      </tbody>
+    </table>
+    <div class="opts opts-2col">
+      <div class="opt"><strong>A</strong> a grown up gorilla</div><div class="opt"><strong>B</strong> a double decker bus</div>
+      <div class="opt"><strong>C</strong> the desert</div><div class="opt"><strong>D</strong> Eastern Australia</div>
+      <div class="opt"><strong>E</strong> the 1980s</div><div class="opt"><strong>F</strong> 2001</div>
+      <div class="opt"><strong>G</strong> 100 tonnes</div><div class="opt"><strong>H</strong> the South Pacific</div>
+      <div class="opt"><strong>I</strong> a school bus</div>
+    </div>
+  </div>
+
+  <hr class="sec-div">
+
+  <!-- Q31-35 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 31&ndash;35</p>
+    <p class="q-group-instr">Complete the table below. Use <strong>NO MORE THAN TWO WORDS</strong> for each answer.</p>
+    <p style="font-weight:bold;margin-bottom:10px;">Supermarket Layout</p>
+    <table>
+      <thead><tr><th>Name of area</th><th>Location of area</th><th>Purpose of area</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Decompression zone (sometimes called the (31)&nbsp;<input class="ii" id="L31" type="text" maxlength="30" autocomplete="off">&nbsp;zone)</td>
+          <td>Situated immediately inside the entrance and is generally free of (32)&nbsp;<input class="ii" id="L32" type="text" maxlength="30" autocomplete="off"></td>
+          <td>To encourage the customer to (33)&nbsp;<input class="ii" id="L33" type="text" maxlength="30" autocomplete="off">&nbsp;to the supermarket</td>
+        </tr>
+        <tr>
+          <td>(34)&nbsp;<input class="ii" id="L34" type="text" maxlength="30" autocomplete="off">&nbsp;zone</td>
+          <td>Situated on the right side near the front door</td>
+          <td>To encourage customers to relax before they start shopping</td>
+        </tr>
+        <tr>
+          <td>Power aisle</td>
+          <td>The central route through the supermarket</td>
+          <td>To display (35)&nbsp;<input class="ii" id="L35" type="text" maxlength="30" autocomplete="off"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Q36-40 -->
+  <div class="q-group">
+    <p class="q-group-title">Questions 36&ndash;40</p>
+    <p class="q-group-instr">Which items do the following sentences apply to? Write the correct letter A, B, C, D or E.</p>
+    <div class="opts opts-2col" style="margin-bottom:14px;">
+      <div class="opt"><strong>A</strong> fruit and vegetables</div><div class="opt"><strong>B</strong> bread and milk</div>
+      <div class="opt"><strong>C</strong> cheap tinned foods</div><div class="opt"><strong>D</strong> flowers</div>
+      <div class="opt"><strong>E</strong> sunglasses</div>
+    </div>
+    <div class="sent-item"><span class="qn">36.</span> They are referred to as distress goods. <input class="ii sm" id="L36" type="text" maxlength="2" autocomplete="off"></div>
+    <div class="sent-item"><span class="qn">37.</span> They are always located at the front of the supermarket. <input class="ii sm" id="L37" type="text" maxlength="2" autocomplete="off"></div>
+    <div class="sent-item"><span class="qn">38.</span> They are referred to as destination goods. <input class="ii sm" id="L38" type="text" maxlength="2" autocomplete="off"></div>
+    <div class="sent-item"><span class="qn">39.</span> They are normally located below eye level. <input class="ii sm" id="L39" type="text" maxlength="2" autocomplete="off"></div>
+    <div class="sent-item"><span class="qn">40.</span> They are often located at the check-out. <input class="ii sm" id="L40" type="text" maxlength="2" autocomplete="off"></div>
+  </div>
+
+  <div class="sec-footer">
+    <button class="btn btn-nav" onclick="goSection(2)">Next: Reading &rarr;</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SECTION 2: READING
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="test-section" id="sec2">
+<div class="page-wrapper">
+
+  <div class="section-heading">
+    <h2>Section 2 &mdash; Reading</h2>
+    <span>60 minutes &nbsp;|&nbsp; 40 Questions &nbsp;|&nbsp; 3 Passages</span>
+  </div>
+  <div class="instructions">Read each passage carefully and answer all questions. You may refer back to the passages at any time.</div>
+
+  <!-- PASSAGE 1 -->
+  <p class="passage-label">Reading Passage 1</p>
+  <h2 class="passage-title">Making Time for Science</h2>
+  <div class="passage-body">
+    <p>Chronobiology might sound a little futuristic &ndash; like something from a science fiction novel, perhaps &ndash; but it&rsquo;s actually a field of study that concerns one of the oldest processes life on this planet has ever known: short-term rhythms of time and their effect on flora and fauna.</p>
+    <p>This can take many forms. Marine life, for example, is influenced by tidal patterns. Animals tend to be active or inactive depending on the position of the sun or moon. Numerous creatures, humans included, are largely diurnal &ndash; that is, they like to come out during the hours of sunlight. Nocturnal animals, such as bats and possums, prefer to forage by night. A third group are known as crepuscular: they thrive in the low-light of dawn and dusk and remain inactive at other hours.</p>
+    <p>When it comes to humans, chronobiologists are interested in what is known as the circadian rhythm. This is the complete cycle our bodies are naturally geared to undergo within the passage of a twenty-four hour day. Aside from sleeping at night and waking during the day, each cycle involves many other factors such as changes in blood pressure and body temperature. Not everyone has an identical circadian rhythm. &lsquo;Night people&rsquo;, for example, often describe how they find it very hard to operate during the morning, but become alert and focused by evening. This is a benign variation within circadian rhythms known as a chronotype.</p>
+    <p>Scientists have limited abilities to create durable modifications of chronobiological demands. Recent therapeutic developments for humans such as artificial light machines and melatonin administration can reset our circadian rhythms, for example, but our bodies can tell the difference and health suffers when we breach these natural rhythms for extended periods of time. Plants appear no more malleable in this respect; studies demonstrate that vegetables grown in season and ripened on the tree are far higher in essential nutrients than those grown in greenhouses and ripened by laser.</p>
+    <p>Knowledge of chronobiological patterns can have many pragmatic implications for our day-to-day lives. While contemporary living can sometimes appear to subjugate biology &ndash; after all, who needs circadian rhythms when we have caffeine pills, energy drinks, shift work and cities that never sleep? &ndash; keeping in synch with our body clock is important.</p>
+    <p>The average urban resident, for example, rouses at the eye-blearing time of 6.04 a.m., which researchers believe to be far too early. One study found that even rising at 7.00 a.m. has deleterious effects on health unless exercise is performed for 30 minutes afterward. The optimum moment has been whittled down to 7.22 a.m.; muscle aches, headaches and moodiness were reported to be lowest by participants in the study who awoke then.</p>
+    <p>Once you&rsquo;re up and ready to go, what then? If you&rsquo;re trying to shed some extra pounds, dieticians are adamant: never skip breakfast. This disorients your circadian rhythm and puts your body in starvation mode. The recommended course of action is to follow an intense workout with a carbohydrate-rich breakfast; the other way round and weight loss results are not as pronounced.</p>
+    <p>Morning is also great for breaking out the vitamins. Supplement absorption by the body is not temporal-dependent, but naturopath Pam Stone notes that the extra boost at breakfast helps us get energised for the day ahead. For improved absorption, Stone suggests pairing supplements with a food in which they are soluble and steering clear of caffeinated beverages. Finally, Stone warns to take care with storage; high potency is best for absorption, and warmth and humidity are known to deplete the potency of a supplement.</p>
+    <p>After-dinner espressos are becoming more of a tradition &ndash; we have the Italians to thank for that &ndash; but to prepare for a good night&rsquo;s sleep we are better off putting the brakes on caffeine consumption as early as 3 p.m. With a seven hour half-life, a cup of coffee containing 90 mg of caffeine taken at this hour could still leave 45 mg of caffeine in your nervous system at ten o&rsquo;clock that evening. It is essential that, by the time you are ready to sleep, your body is rid of all traces.</p>
+    <p>Evenings are important for winding down before sleep; however, dietician Geraldine Georgeou warns that an after-five carbohydrate-fast is more cultural myth than chronobiological demand. This will deprive your body of vital energy needs. Overloading your gut could lead to indigestion, though. Our digestive tracts do not shut down for the night entirely, but their work slows to a crawl as our bodies prepare for sleep. Consuming a modest snack should be entirely sufficient.</p>
+  </div>
+
+  <!-- R Q1-7 -->
+  <div class="q-group">
+    <div class="q-hdr"><h3>Questions 1&ndash;7</h3></div>
+    <p class="q-group-instr">Do the following statements agree with the information given in Reading Passage 1?</p>
+    <p class="q-group-sub"><strong>TRUE</strong> &mdash; if the statement agrees with the information<br><strong>FALSE</strong> &mdash; if the statement contradicts the information<br><strong>NOT GIVEN</strong> &mdash; if there is no information on this</p>
+    <div class="tfng-row"><span class="qn">1</span><span class="qt">Chronobiology is the study of how living things have evolved over time.</span><div class="tfng-opts"><label><input type="radio" name="R1" value="T">TRUE</label><label><input type="radio" name="R1" value="F">FALSE</label><label><input type="radio" name="R1" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">2</span><span class="qt">The rise and fall of sea levels affects how sea creatures behave.</span><div class="tfng-opts"><label><input type="radio" name="R2" value="T">TRUE</label><label><input type="radio" name="R2" value="F">FALSE</label><label><input type="radio" name="R2" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">3</span><span class="qt">Most animals are active during the daytime.</span><div class="tfng-opts"><label><input type="radio" name="R3" value="T">TRUE</label><label><input type="radio" name="R3" value="F">FALSE</label><label><input type="radio" name="R3" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">4</span><span class="qt">Circadian rhythms identify how we do different things on different days.</span><div class="tfng-opts"><label><input type="radio" name="R4" value="T">TRUE</label><label><input type="radio" name="R4" value="F">FALSE</label><label><input type="radio" name="R4" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">5</span><span class="qt">A &lsquo;night person&rsquo; can still have a healthy circadian rhythm.</span><div class="tfng-opts"><label><input type="radio" name="R5" value="T">TRUE</label><label><input type="radio" name="R5" value="F">FALSE</label><label><input type="radio" name="R5" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">6</span><span class="qt">New therapies can permanently change circadian rhythms without causing harm.</span><div class="tfng-opts"><label><input type="radio" name="R6" value="T">TRUE</label><label><input type="radio" name="R6" value="F">FALSE</label><label><input type="radio" name="R6" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">7</span><span class="qt">Naturally-produced vegetables have more nutritional value.</span><div class="tfng-opts"><label><input type="radio" name="R7" value="T">TRUE</label><label><input type="radio" name="R7" value="F">FALSE</label><label><input type="radio" name="R7" value="NG">NOT GIVEN</label></div></div>
+  </div>
+
+  <!-- R Q8-13 -->
+  <div class="q-group">
+    <div class="q-hdr"><h3>Questions 8&ndash;13</h3></div>
+    <p class="q-group-instr">Choose the correct letter, A, B, C or D.</p>
+    <div class="mc-item"><div class="mc-q"><span class="qn">8</span><span>What did researchers identify as the ideal time to wake up in the morning?</span></div><div class="mc-opts"><label class="mc-opt"><input type="radio" name="R8" value="A"><div class="oc">A</div><span>6.04</span></label><label class="mc-opt"><input type="radio" name="R8" value="B"><div class="oc">B</div><span>7.00</span></label><label class="mc-opt"><input type="radio" name="R8" value="C"><div class="oc">C</div><span>7.22</span></label><label class="mc-opt"><input type="radio" name="R8" value="D"><div class="oc">D</div><span>7.30</span></label></div></div>
+    <div class="mc-item"><div class="mc-q"><span class="qn">9</span><span>In order to lose weight, we should</span></div><div class="mc-opts"><label class="mc-opt"><input type="radio" name="R9" value="A"><div class="oc">A</div><span>avoid eating breakfast</span></label><label class="mc-opt"><input type="radio" name="R9" value="B"><div class="oc">B</div><span>eat a low carbohydrate breakfast</span></label><label class="mc-opt"><input type="radio" name="R9" value="C"><div class="oc">C</div><span>exercise before breakfast</span></label><label class="mc-opt"><input type="radio" name="R9" value="D"><div class="oc">D</div><span>exercise after breakfast</span></label></div></div>
+    <div class="mc-item"><div class="mc-q"><span class="qn">10</span><span>Which is NOT mentioned as a way to improve supplement absorption?</span></div><div class="mc-opts"><label class="mc-opt"><input type="radio" name="R10" value="A"><div class="oc">A</div><span>avoiding drinks containing caffeine while taking supplements</span></label><label class="mc-opt"><input type="radio" name="R10" value="B"><div class="oc">B</div><span>taking supplements at breakfast</span></label><label class="mc-opt"><input type="radio" name="R10" value="C"><div class="oc">C</div><span>taking supplements with foods that can dissolve them</span></label><label class="mc-opt"><input type="radio" name="R10" value="D"><div class="oc">D</div><span>storing supplements in a cool, dry environment</span></label></div></div>
+    <div class="mc-item"><div class="mc-q"><span class="qn">11</span><span>The best time to stop drinking coffee is</span></div><div class="mc-opts"><label class="mc-opt"><input type="radio" name="R11" value="A"><div class="oc">A</div><span>mid-afternoon</span></label><label class="mc-opt"><input type="radio" name="R11" value="B"><div class="oc">B</div><span>10 p.m.</span></label><label class="mc-opt"><input type="radio" name="R11" value="C"><div class="oc">C</div><span>only when feeling anxious</span></label><label class="mc-opt"><input type="radio" name="R11" value="D"><div class="oc">D</div><span>after dinner</span></label></div></div>
+    <div class="mc-item"><div class="mc-q"><span class="qn">12</span><span>In the evening, we should</span></div><div class="mc-opts"><label class="mc-opt"><input type="radio" name="R12" value="A"><div class="oc">A</div><span>stay away from carbohydrates</span></label><label class="mc-opt"><input type="radio" name="R12" value="B"><div class="oc">B</div><span>stop exercising</span></label><label class="mc-opt"><input type="radio" name="R12" value="C"><div class="oc">C</div><span>eat as much as possible</span></label><label class="mc-opt"><input type="radio" name="R12" value="D"><div class="oc">D</div><span>eat a light meal</span></label></div></div>
+    <div class="mc-item"><div class="mc-q"><span class="qn">13</span><span>Which phrase best describes the main aim of Reading Passage 1?</span></div><div class="mc-opts"><label class="mc-opt"><input type="radio" name="R13" value="A"><div class="oc">A</div><span>to suggest healthier ways of eating, sleeping and exercising</span></label><label class="mc-opt"><input type="radio" name="R13" value="B"><div class="oc">B</div><span>to describe how modern life has made chronobiology largely irrelevant</span></label><label class="mc-opt"><input type="radio" name="R13" value="C"><div class="oc">C</div><span>to introduce chronobiology and describe some practical applications</span></label><label class="mc-opt"><input type="radio" name="R13" value="D"><div class="oc">D</div><span>to plan a daily schedule that can alter our natural chronobiological rhythms</span></label></div></div>
+  </div>
+
+  <hr class="pass-div">
+
+  <!-- PASSAGE 2 -->
+  <p class="passage-label">Reading Passage 2</p>
+  <h2 class="passage-title">The Triune Brain</h2>
+  <div class="passage-body">
+    <p>The first of our three brains to evolve is what scientists call the reptilian cortex. This brain sustains the elementary activities of animal survival such as respiration, adequate rest and a beating heart. We are not required to consciously &ldquo;think&rdquo; about these activities. The reptilian cortex also houses the &ldquo;startle centre&rdquo;, a mechanism that facilitates swift reactions to unexpected occurrences in our surroundings. That panicked lurch you experience when a door slams shut somewhere in the house, or the heightened awareness you feel when a twig cracks in a nearby bush while out on an evening stroll are both examples of the reptilian cortex at work. When it comes to our interaction with others, the reptilian brain offers up only the most basic impulses: aggression, mating, and territorial defence. There is no great difference, in this sense, between a crocodile defending its spot along the river and a turf war between two urban gangs.</p>
+    <p>Although the lizard may stake a claim to its habitat, it exerts total indifference toward the well-being of its young. Listen to the anguished squeal of a dolphin separated from its pod or witness the sight of elephants mourning their dead, however, and it is clear that a new development is at play. Scientists have identified this as the limbic cortex. Unique to mammals, the limbic cortex impels creatures to nurture their offspring by delivering feelings of tenderness and warmth to the parent when children are nearby. These same sensations also cause mammals to develop various types of social relations and kinship networks. When we are with others of &ldquo;our kind&rdquo; &ndash; be it at soccer practice, church, school or a nightclub &ndash; we experience positive sensations of togetherness, solidarity and comfort. If we spend too long away from these networks, then loneliness sets in and encourages us to seek companionship.</p>
+    <p>Only human capabilities extend far beyond the scope of these two cortexes. Humans eat, sleep and play, but we also speak, plot, rationalise and debate finer points of morality. Our unique abilities are the result of an expansive third brain &ndash; the neocortex &ndash; which engages with logic, reason and ideas. The power of the neocortex comes from its ability to think beyond the present, concrete moment. While other mammals are mainly restricted to impulsive actions (although some, such as apes, can learn and remember simple lessons), humans can think about the &ldquo;big picture&rdquo;. We can string together simple lessons to develop complex theories of physical or social phenomena (such as the laws of gravity and a concern for human rights).</p>
+    <p>The neocortex is also responsible for the process by which we decide on and commit to particular courses of action. Strung together over time, these choices can accumulate into feats of progress unknown to other animals. Anticipating a better grade on the following morning&rsquo;s exam, a student can ignore the limbic urge to socialise and go to sleep early instead. Over three years, this ongoing sacrifice translates into a first class degree and a scholarship to graduate school; over a lifetime, it can mean groundbreaking contributions to human knowledge and development. The ability to sacrifice our drive for immediate satisfaction in order to benefit later is a product of the neocortex.</p>
+    <p>Understanding the triune brain can help us appreciate the different natures of brain damage and psychological disorders. The most devastating form of brain damage, for example, is a condition in which someone is understood to be brain dead. In this state a person appears merely unconscious &ndash; sleeping, perhaps &ndash; but this is illusory. Here, the reptilian brain is functioning on autopilot despite the permanent loss of other cortexes.</p>
+    <p>Disturbances to the limbic cortex are registered in a different manner. Pups with limbic damage can move around and feed themselves well enough but do not register the presence of their littermates. Scientists have observed how, after a limbic lobotomy, &ldquo;one impaired monkey stepped on his outraged peers as if treading on a log or a rock&rdquo;. In our own species, limbic damage is closely related to sociopathic behaviour. Sociopaths in possession of fully-functioning neocortexes are often shrewd and emotionally intelligent people but lack any ability to relate to, empathise with or express concern for others.</p>
+    <p>One of the neurological wonders of history occurred when a railway worker named Phineas Gage survived an incident during which a metal rod skewered his skull, taking a considerable amount of his neocortex with it. Though Gage continued to live and work as before, his fellow employees observed a shift in the equilibrium of his personality. Gage&rsquo;s animal propensities were now sharply pronounced while his intellectual abilities suffered; garrulous or obscene jokes replaced his once quick wit. New findings suggest, however, that Gage managed to soften these abrupt changes over time and rediscover an appropriate social manner. This would indicate that reparative therapy has the potential to help patients with advanced brain trauma to gain an improved quality of life.</p>
+  </div>
+
+  <!-- R Q14-22 -->
+  <div class="q-group">
+    <div class="q-hdr"><h3>Questions 14&ndash;22</h3></div>
+    <p class="q-group-instr">Classify the following as typical of</p>
+    <div class="cl-key"><div><span>A</span> &nbsp;the reptilian cortex</div><div><span>B</span> &nbsp;the limbic cortex</div><div><span>C</span> &nbsp;the neocortex</div></div>
+    <div class="cl-row"><span class="qn">14</span><span style="flex:1">giving up short-term happiness for future gains</span><div class="cl-opts"><label><input type="radio" name="R14" value="A">A</label><label><input type="radio" name="R14" value="B">B</label><label><input type="radio" name="R14" value="C">C</label></div></div>
+    <div class="cl-row"><span class="qn">15</span><span style="flex:1">maintaining the bodily functions necessary for life</span><div class="cl-opts"><label><input type="radio" name="R15" value="A">A</label><label><input type="radio" name="R15" value="B">B</label><label><input type="radio" name="R15" value="C">C</label></div></div>
+    <div class="cl-row"><span class="qn">16</span><span style="flex:1">experiencing the pain of losing another</span><div class="cl-opts"><label><input type="radio" name="R16" value="A">A</label><label><input type="radio" name="R16" value="B">B</label><label><input type="radio" name="R16" value="C">C</label></div></div>
+    <div class="cl-row"><span class="qn">17</span><span style="flex:1">forming communities and social groups</span><div class="cl-opts"><label><input type="radio" name="R17" value="A">A</label><label><input type="radio" name="R17" value="B">B</label><label><input type="radio" name="R17" value="C">C</label></div></div>
+    <div class="cl-row"><span class="qn">18</span><span style="flex:1">making a decision and carrying it out</span><div class="cl-opts"><label><input type="radio" name="R18" value="A">A</label><label><input type="radio" name="R18" value="B">B</label><label><input type="radio" name="R18" value="C">C</label></div></div>
+    <div class="cl-row"><span class="qn">19</span><span style="flex:1">guarding areas of land</span><div class="cl-opts"><label><input type="radio" name="R19" value="A">A</label><label><input type="radio" name="R19" value="B">B</label><label><input type="radio" name="R19" value="C">C</label></div></div>
+    <div class="cl-row"><span class="qn">20</span><span style="flex:1">developing explanations for things</span><div class="cl-opts"><label><input type="radio" name="R20" value="A">A</label><label><input type="radio" name="R20" value="B">B</label><label><input type="radio" name="R20" value="C">C</label></div></div>
+    <div class="cl-row"><span class="qn">21</span><span style="flex:1">looking after one&rsquo;s young</span><div class="cl-opts"><label><input type="radio" name="R21" value="A">A</label><label><input type="radio" name="R21" value="B">B</label><label><input type="radio" name="R21" value="C">C</label></div></div>
+    <div class="cl-row"><span class="qn">22</span><span style="flex:1">responding quickly to sudden movement and noise</span><div class="cl-opts"><label><input type="radio" name="R22" value="A">A</label><label><input type="radio" name="R22" value="B">B</label><label><input type="radio" name="R22" value="C">C</label></div></div>
+  </div>
+
+  <!-- R Q23-26 -->
+  <div class="q-group">
+    <div class="q-hdr"><h3>Questions 23&ndash;26</h3></div>
+    <p class="q-group-instr">Complete the sentences below. Write <strong>NO MORE THAN TWO WORDS</strong> from the passage for each answer.</p>
+    <div class="sent-item"><span class="qn">23.</span> A person with only a functioning reptilian cortex is known as <input class="ii md" id="R23" type="text" autocomplete="off">.</div>
+    <div class="sent-item"><span class="qn">24.</span> <input class="ii md" id="R24" type="text" autocomplete="off"> in humans is associated with limbic disruption.</div>
+    <div class="sent-item"><span class="qn">25.</span> An industrial accident caused Phineas Gage to lose part of his <input class="ii md" id="R25" type="text" autocomplete="off">.</div>
+    <div class="sent-item"><span class="qn">26.</span> After his accident, co-workers noticed an imbalance between Gage&rsquo;s <input class="ii md" id="R26" type="text" autocomplete="off"> and higher-order thinking.</div>
+  </div>
+
+  <hr class="pass-div">
+
+  <!-- PASSAGE 3 -->
+  <p class="passage-label">Reading Passage 3</p>
+  <h2 class="passage-title">Helium&rsquo;s Future Up in the Air</h2>
+  <div class="passage-body">
+    <p><span class="para-lbl">A</span>In recent years we have all been exposed to dire media reports concerning the impending demise of global coal and oil reserves, but the depletion of another key non-renewable resource continues without receiving much press at all. Helium &ndash; an inert, odourless, monatomic element known to lay people as the substance that makes balloons float and voices squeak when inhaled &ndash; could be gone from this planet within a generation.</p>
+    <p><span class="para-lbl">B</span>Helium itself is not rare; there is actually a plentiful supply of it in the cosmos. In fact, 24 per cent of our galaxy&rsquo;s elemental mass consists of helium, which makes it the second most abundant element in our universe. Because of its lightness, however, most helium vanished from our own planet many years ago. Consequently, only a miniscule proportion &ndash; 0.00052%, to be exact &ndash; remains in earth&rsquo;s atmosphere. Helium is the by-product of millennia of radioactive decay from the elements thorium and uranium. The helium is mostly trapped in subterranean natural gas bunkers and commercially extracted through a method known as fractional distillation.</p>
+    <p><span class="para-lbl">C</span>The loss of helium on Earth would affect society greatly. Defying the perception of it as a novelty substance for parties and gimmicks, the element actually has many vital applications in society. Probably the most well known commercial usage is in airships and blimps (non-flammable helium replaced hydrogen as the lifting gas du jour after the Hindenburg catastrophe in 1932, during which an airship burst into flames and crashed to the ground killing some passengers and crew). But helium is also instrumental in deep-sea diving, where it is blended with nitrogen to mitigate the dangers of inhaling ordinary air under high pressure; as a cleaning agent for rocket engines; and, in its most prevalent use, as a coolant for superconducting magnets in hospital MRI scanners.</p>
+    <p><span class="para-lbl">D</span>The possibility of losing helium forever poses the threat of a real crisis because its unique qualities are extraordinarily difficult, if not impossible to duplicate. Helium is even cheerfully derided as a &ldquo;loner&rdquo; element since it does not adhere to other molecules like its cousin, hydrogen. According to Dr. Lee Sobotka, helium is the &ldquo;most noble of gases, meaning it&rsquo;s very stable and non-reactive for the most part &hellip; it has a closed electronic configuration, a very tightly bound atom. It is this coveting of its own electrons that prevents combination with other elements&rdquo;. Another important attribute is helium&rsquo;s unique boiling point, which is lower than that for any other element. The worsening global shortage could render millions of dollars of high-value, life-saving equipment totally useless. There is an enormous supply and demand imbalance partly brought about by the expansion of high-tech manufacturing in Asia.</p>
+    <p><span class="para-lbl">E</span>The source of the problem is the Helium Privatisation Act (HPA), an American law passed in 1996 that requires the U.S. National Helium Reserve to liquidate its helium assets by 2015 regardless of the market price. Although intended to settle the original cost of the reserve by a U.S. Congress ignorant of its ramifications, the result of this fire sale is that global helium prices are so artificially deflated that few can be bothered recycling the substance or using it judiciously. As Sobotka notes: &ldquo;[t]he government had the good vision to store helium, and the question now is: Will the corporations have the vision to capture it when extracting natural gas, and consumers the wisdom to recycle? This takes long-term vision because present market forces are not sufficient to compel prudent practice&rdquo;. For Nobel-prize laureate Robert Richardson, the U.S. government must be prevailed upon to repeal its privatisation policy as the country supplies over 80 per cent of global helium. For Richardson, a twenty- to fifty-fold increase in prices would provide incentives to recycle.</p>
+    <p><span class="para-lbl">F</span>A number of steps need to be taken in order to avert a costly predicament in the coming decades. Firstly, all existing supplies of helium ought to be conserved and released only by permit, with medical uses receiving precedence over other commercial or recreational demands. Secondly, conservation should be obligatory and enforced by a regulatory agency. At the moment some users, such as hospitals, tend to recycle diligently while others, such as NASA, squander massive amounts of helium. Lastly, research into alternatives to helium must begin in earnest.</p>
+  </div>
+
+  <!-- R Q27-31 -->
+  <div class="q-group">
+    <div class="q-hdr"><h3>Questions 27&ndash;31</h3></div>
+    <p class="q-group-instr">Which paragraph contains the following information? Write the correct letter A&ndash;F.</p>
+    <div class="pm-row"><span class="qn">27</span><span style="flex:1">a use for helium which makes an activity safer</span><input class="ii sm" id="R27" type="text" maxlength="2" autocomplete="off"></div>
+    <div class="pm-row"><span class="qn">28</span><span style="flex:1">the possibility of creating an alternative to helium</span><input class="ii sm" id="R28" type="text" maxlength="2" autocomplete="off"></div>
+    <div class="pm-row"><span class="qn">29</span><span style="flex:1">a term which describes the process of how helium is taken out of the ground</span><input class="ii sm" id="R29" type="text" maxlength="2" autocomplete="off"></div>
+    <div class="pm-row"><span class="qn">30</span><span style="flex:1">a reason why users of helium do not make efforts to conserve it</span><input class="ii sm" id="R30" type="text" maxlength="2" autocomplete="off"></div>
+    <div class="pm-row"><span class="qn">31</span><span style="flex:1">a contrast between helium&rsquo;s chemical properties and how non-scientists think about it</span><input class="ii sm" id="R31" type="text" maxlength="2" autocomplete="off"></div>
+  </div>
+
+  <!-- R Q32-35 -->
+  <div class="q-group">
+    <div class="q-hdr"><h3>Questions 32&ndash;35</h3></div>
+    <p class="q-group-instr">Do the following statements agree with the claims of the writer?</p>
+    <p class="q-group-sub"><strong>YES</strong> &mdash; if the statement agrees with the claims of the writer<br><strong>NO</strong> &mdash; if the statement contradicts the claims of the writer<br><strong>NOT GIVEN</strong> &mdash; if it is impossible to say what the writer thinks about this</p>
+    <div class="tfng-row"><span class="qn">32</span><span class="qt">Helium chooses to be on its own.</span><div class="tfng-opts"><label><input type="radio" name="R32" value="Y">YES</label><label><input type="radio" name="R32" value="N">NO</label><label><input type="radio" name="R32" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">33</span><span class="qt">Helium is a very cold substance.</span><div class="tfng-opts"><label><input type="radio" name="R33" value="Y">YES</label><label><input type="radio" name="R33" value="N">NO</label><label><input type="radio" name="R33" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">34</span><span class="qt">High-tech industries in Asia use more helium than laboratories and manufacturers in other parts of the world.</span><div class="tfng-opts"><label><input type="radio" name="R34" value="Y">YES</label><label><input type="radio" name="R34" value="N">NO</label><label><input type="radio" name="R34" value="NG">NOT GIVEN</label></div></div>
+    <div class="tfng-row"><span class="qn">35</span><span class="qt">The US Congress understood the possible consequences of the HPA.</span><div class="tfng-opts"><label><input type="radio" name="R35" value="Y">YES</label><label><input type="radio" name="R35" value="N">NO</label><label><input type="radio" name="R35" value="NG">NOT GIVEN</label></div></div>
+  </div>
+
+  <!-- R Q36-40 -->
+  <div class="q-group">
+    <div class="q-hdr"><h3>Questions 36&ndash;40</h3></div>
+    <p class="q-group-instr">Complete the summary below. Choose <strong>NO MORE THAN TWO WORDS</strong> from the passage for each answer.</p>
+    <div class="summ-box">
+      Sobotka argues that big business and users of helium need to help look after helium stocks because (36)&nbsp;<input class="ii md" id="R36" type="text" autocomplete="off">&nbsp;will not be encouraged through buying and selling alone. Richardson believes that the (37)&nbsp;<input class="ii md" id="R37" type="text" autocomplete="off">&nbsp;needs to be withdrawn, as the U.S. provides most of the world&rsquo;s helium. He argues that higher costs would mean people have (38)&nbsp;<input class="ii" id="R38" type="text" autocomplete="off">&nbsp;to use the resource many times over.
+      <br><br>
+      People should need a (39)&nbsp;<input class="ii" id="R39" type="text" autocomplete="off">&nbsp;to access helium that we still have. Furthermore, a (40)&nbsp;<input class="ii md" id="R40" type="text" autocomplete="off">&nbsp;should ensure that helium is used carefully.
+    </div>
+  </div>
+
+  <div class="sec-footer">
+    <button class="btn btn-nav" onclick="goSection(3)">Next: Writing &rarr;</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     SECTION 3: WRITING
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="test-section" id="sec3">
+<div class="page-wrapper">
+
+  <div class="section-heading">
+    <h2>Section 3 &mdash; Writing</h2>
+    <span>60 minutes &nbsp;|&nbsp; 2 Tasks</span>
+  </div>
+  <div class="instructions">Complete both tasks. Task 1 is recommended 20 minutes. Task 2 is recommended 40 minutes and carries more marks.</div>
+
+  <!-- TASK 1 -->
+  <div class="task-block">
+    <div class="task-hdr">
+      <h3>Task 1</h3>
+      <span class="task-meta">Recommended: 20 minutes &nbsp;|&nbsp; Minimum: 150 words</span>
+    </div>
+    <div class="task-prompt">
+      <p><strong>Task 1:</strong> The table below gives information about the underground railway systems in six cities.</p>
+      <p>Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least <strong>150 words</strong>.</p>
+    </div>
+    <table>
+      <thead><tr><th>City</th><th>Date opened</th><th>Kilometres of route</th><th>Passengers per year (in millions)</th></tr></thead>
+      <tbody>
+        <tr><td>London</td><td>1863</td><td>394</td><td>775</td></tr>
+        <tr><td>Paris</td><td>1900</td><td>199</td><td>1191</td></tr>
+        <tr><td>Tokyo</td><td>1927</td><td>155</td><td>1927</td></tr>
+        <tr><td>Washington DC</td><td>1976</td><td>126</td><td>144</td></tr>
+        <tr><td>Kyoto</td><td>1981</td><td>11</td><td>45</td></tr>
+        <tr><td>Los Angeles</td><td>2001</td><td>28</td><td>50</td></tr>
+      </tbody>
+    </table>
+    <div class="wc-bar">
+      <span>Your response</span>
+      <span>Word count: <span class="wc-num below" id="wc1">0</span> / 150</span>
+    </div>
+    <textarea class="w-area" id="W1" rows="22"
+      spellcheck="false" autocorrect="off" autocomplete="off"
+      autocapitalize="off" data-gramm="false"
+      data-gramm_editor="false" data-enable-grammarly="false"
+      oninput="countW('W1','wc1',150)"
+      placeholder="Begin writing your Task 1 response here..."></textarea>
+    <p class="w-note">Write at least 150 words. Word count updates as you type.</p>
+  </div>
+
+  <hr class="task-div">
+
+  <!-- TASK 2 -->
+  <div class="task-block">
+    <div class="task-hdr">
+      <h3>Task 2</h3>
+      <span class="task-meta">Recommended: 40 minutes &nbsp;|&nbsp; Minimum: 250 words</span>
+    </div>
+    <div class="task-prompt">
+      <p><strong>Task 2:</strong> Some say that the most important thing about being rich is that one has the opportunity to help others. To what extent do you agree or disagree?</p>
+      <p>Write at least <strong>250 words</strong>.</p>
+    </div>
+    <div class="wc-bar">
+      <span>Your response</span>
+      <span>Word count: <span class="wc-num below" id="wc2">0</span> / 250</span>
+    </div>
+    <textarea class="w-area" id="W2" rows="36"
+      spellcheck="false" autocorrect="off" autocomplete="off"
+      autocapitalize="off" data-gramm="false"
+      data-gramm_editor="false" data-enable-grammarly="false"
+      oninput="countW('W2','wc2',250)"
+      placeholder="Begin writing your Task 2 response here..."></textarea>
+    <p class="w-note">Write at least 250 words. Word count updates as you type.</p>
+  </div>
+
+  <!-- SUBMIT BAR -->
+  <div class="submit-bar">
+    <div class="submit-bar-left">
+      Submitting will download a PDF of your answers and open Gmail to send it to your teacher.
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-secondary" onclick="if(confirm('Clear all answers? This cannot be undone.'))clearAll()">Clear All</button>
+      <button class="btn btn-primary" onclick="submitTest()">Submit Test</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══ JAVASCRIPT ══════════════════════════════════════════════════════════ -->
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+var TEACHER_EMAIL = 'teacher@gmail.com';
+
+// ── SECTION NAVIGATION ──────────────────────────────────────────────────────
+var currentSection = 1;
+var sectionTimes = {1: 40*60, 2: 60*60, 3: 60*60};
+var sectionLabels = {1: '40:00', 2: '60:00', 3: '60:00'};
+
+function goSection(n) {
+  // Hide current section
+  document.getElementById('sec' + currentSection).classList.remove('active');
+  document.getElementById('tab' + currentSection).classList.remove('active');
+  
+  // Mark completed
+  if (currentSection < n) {
+    document.getElementById('tab' + currentSection).classList.add('completed');
+  }
+  
+  // Show new section
+  currentSection = n;
+  document.getElementById('sec' + n).classList.add('active');
+  document.getElementById('tab' + n).classList.add('active');
+  window.scrollTo(0, 0);
+  
+  // Reset timer for new section
+  clearInterval(timerInterval);
+  running = false;
+  secondsLeft = sectionTimes[n];
+  document.getElementById('timerDisplay').className = 'timer-display';
+  document.getElementById('timerDisplay').textContent = sectionLabels[n];
+  document.getElementById('timerLabel').textContent = sectionLabels[n];
+  document.getElementById('btnStart').style.display = 'inline-block';
+  document.getElementById('btnStart').textContent = 'Start';
+  document.getElementById('btnPause').style.display = 'none';
+  
+  // Auto-start timer
+  startTimer();
+}
+
+// ── TIMER ────────────────────────────────────────────────────────────────────
+var secondsLeft = 40*60;
+var timerInterval = null;
+var running = false;
+
+function fmt(s) {
+  var m = Math.floor(s/60), sec = s%60;
+  return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+}
+function updateDisp() {
+  var el = document.getElementById('timerDisplay');
+  el.textContent = fmt(secondsLeft);
+  el.className = 'timer-display' + (secondsLeft<=300 ? ' warning' : '');
+}
+function startTimer() {
+  if (running) return;
+  running = true;
+  document.getElementById('btnStart').style.display = 'none';
+  document.getElementById('btnPause').style.display = 'inline-block';
+  timerInterval = setInterval(function() {
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval); running = false;
+      document.getElementById('timerDisplay').textContent = '00:00';
+      document.getElementById('timerDisplay').className = 'timer-display warning';
+      document.getElementById('btnPause').style.display = 'none';
+      document.getElementById('btnStart').style.display = 'inline-block';
+      document.getElementById('btnStart').textContent = 'Start';
+      alert('Time is up for this section.');
+      return;
+    }
+    secondsLeft--;
+    updateDisp();
+  }, 1000);
+}
+function pauseTimer() {
+  if (!running) return;
+  clearInterval(timerInterval); running = false;
+  document.getElementById('btnPause').style.display = 'none';
+  document.getElementById('btnStart').style.display = 'inline-block';
+  document.getElementById('btnStart').textContent = 'Resume';
+}
+function resetTimer() {
+  clearInterval(timerInterval); running = false;
+  secondsLeft = sectionTimes[currentSection];
+  updateDisp();
+  document.getElementById('timerDisplay').className = 'timer-display';
+  document.getElementById('btnPause').style.display = 'none';
+  document.getElementById('btnStart').style.display = 'inline-block';
+  document.getElementById('btnStart').textContent = 'Start';
+}
+
+// ── CHECKBOX LIMIT ───────────────────────────────────────────────────────────
+['L11','L12','L13','L14'].forEach(function(name) {
+  document.querySelectorAll('input[name="'+name+'"]').forEach(function(box) {
+    box.addEventListener('change', function() {
+      var checked = document.querySelectorAll('input[name="'+name+'"]:checked');
+      if (checked.length > 2) this.checked = false;
+    });
+  });
+});
+
+// ── WORD COUNTER ─────────────────────────────────────────────────────────────
+function countW(id, countId, min) {
+  var t = document.getElementById(id).value.trim();
+  var n = t === '' ? 0 : t.split(/\s+/).filter(function(w){return w.length>0;}).length;
+  var el = document.getElementById(countId);
+  el.textContent = n;
+  el.className = 'wc-num ' + (n >= min ? 'met' : 'below');
+}
+
+// ── COLLECT ANSWERS ───────────────────────────────────────────────────────────
+function collectAnswers() {
+  var data = {};
+  data.name = document.getElementById('sName').value || '(not entered)';
+  data.id = document.getElementById('sID').value || '(not entered)';
+  data.date = document.getElementById('sDate').value || '(not entered)';
+
+  // Listening text inputs L1-L40
+  for (var i=1; i<=40; i++) {
+    var el = document.getElementById('L'+i);
+    if (el) data['L'+i] = el.value.trim() || '-';
+  }
+  // Listening checkboxes L11-L14
+  ['L11','L12','L13','L14'].forEach(function(name) {
+    var vals = [];
+    document.querySelectorAll('input[name="'+name+'"]:checked').forEach(function(c){vals.push(c.value);});
+    data[name+'_cb'] = vals.join(', ') || '-';
+  });
+
+  // Reading radios R1-R35
+  for (var i=1; i<=35; i++) {
+    var radios = document.querySelectorAll('input[name="R'+i+'"]:checked');
+    data['R'+i] = radios.length ? radios[0].value : '-';
+  }
+  // Reading text inputs R23-R31, R36-R40
+  [23,24,25,26,27,28,29,30,31,36,37,38,39,40].forEach(function(i){
+    var el = document.getElementById('R'+i);
+    if (el) data['R'+i] = el.value.trim() || '-';
+  });
+
+  // Writing
+  data.W1 = document.getElementById('W1').value.trim() || '-';
+  data.W2 = document.getElementById('W2').value.trim() || '-';
+
+  return data;
+}
+
+// ── GENERATE PDF (answers only) ───────────────────────────────────────────────
+function generatePDF(data) {
+  var doc = new window.jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var m = 18;
+  var y = 20;
+
+  function hline() {
+    doc.setDrawColor(200); doc.line(m, y, 210-m, y); y+=4;
+  }
+  function h1(txt) {
+    doc.setFont('helvetica','bold'); doc.setFontSize(14);
+    doc.text(txt, m, y); y += 8;
+  }
+  function h2(txt) {
+    doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    doc.text(txt, m, y); y += 6;
+  }
+  function ans(qnum, val) {
+    doc.setFont('helvetica','normal'); doc.setFontSize(10);
+    doc.text(qnum.padEnd(6, ' ') + val, m+4, y);
+    y += 5;
+    if (y > 270) { doc.addPage(); y = 20; }
+  }
+  function body(txt) {
+    doc.setFont('helvetica','normal'); doc.setFontSize(10);
+    var lines = doc.splitTextToSize(txt, 174);
+    lines.forEach(function(line) {
+      doc.text(line, m, y); y += 5;
+      if (y > 270) { doc.addPage(); y = 20; }
+    });
+    y += 3;
+  }
+
+  // Title
+  doc.setFont('helvetica','bold'); doc.setFontSize(16);
+  doc.text('IELTS Placement Test - Student Answers', m, y); y+=8;
+  hline();
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text('Student: '+data.name+'  |  ID: '+data.id+'  |  Date: '+data.date, m, y); y+=6;
+  hline(); y+=2;
+
+  // LISTENING
+  h1('LISTENING SECTION');
+  h2('Questions 1-10');
+  for (var i=1; i<=10; i++) ans('L'+i, data['L'+i]);
+  y+=2; h2('Questions 11-14 (two answers each)');
+  ans('L11', data.L11_cb); ans('L12', data.L12_cb);
+  ans('L13', data.L13_cb); ans('L14', data.L14_cb);
+  y+=2; h2('Questions 15-40');
+  for (var i=15; i<=40; i++) ans('L'+i, data['L'+i]);
+  y+=3; hline(); y+=2;
+
+  // READING
+  if (y > 230) { doc.addPage(); y = 20; }
+  h1('READING SECTION');
+  h2('Questions 1-22');
+  for (var i=1; i<=22; i++) ans('R'+i, data['R'+i]);
+  y+=2; h2('Questions 23-40');
+  for (var i=23; i<=40; i++) ans('R'+i, data['R'+i]);
+  y+=3; hline(); y+=2;
+
+  // WRITING
+  if (y > 220) { doc.addPage(); y = 20; }
+  h1('WRITING SECTION');
+  h2('Task 1 Response'); y+=2;
+  body(data.W1);
+  y+=3; hline(); y+=2;
+  if (y > 220) { doc.addPage(); y = 20; }
+  h2('Task 2 Response'); y+=2;
+  body(data.W2);
+
+  return doc;
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
+function submitTest() {
+  if (!confirm('Submit your test? This will download your answers as PDF and open Gmail.')) return;
+
+  var data = collectAnswers();
+  var doc = generatePDF(data);
+  var fileName = 'IELTS_' + data.name.replace(/\s+/g,'_') + '_' + (data.date||'answers') + '.pdf';
+  doc.save(fileName);
+
+  // Compact Gmail body
+  var body = 'IELTS Placement Test - Student Answers\n';
+  body += 'Student: ' + data.name + '\nID: ' + data.id + '\nDate: ' + data.date + '\n\n';
+  body += 'LISTENING: See attached PDF for all 40 answers\n';
+  body += 'READING: See attached PDF for all 40 answers\n';
+  body += 'WRITING: See attached PDF for both task responses\n';
+
+  var gmailURL = 'https://mail.google.com/mail/?view=cm&fs=1'
+    + '&to=' + encodeURIComponent(TEACHER_EMAIL)
+    + '&su=' + encodeURIComponent('IELTS Test - ' + data.name + ' (' + data.date + ')')
+    + '&body=' + encodeURIComponent(body);
+
+  setTimeout(function() { window.open(gmailURL, '_blank'); }, 800);
+}
+
+function clearAll() {
+  document.querySelectorAll('input[type=text]').forEach(function(i){i.value='';});
+  document.querySelectorAll('input[type=radio]').forEach(function(i){i.checked=false;});
+  document.querySelectorAll('input[type=checkbox]').forEach(function(i){i.checked=false;});
+  document.querySelectorAll('textarea').forEach(function(t){t.value='';});
+  ['wc1','wc2'].forEach(function(id){
+    var el=document.getElementById(id);
+    el.textContent='0'; el.className='wc-num below';
+  });
+}
+
+// Set today's date by default
+document.getElementById('sDate').valueAsDate = new Date();
+</script>
+</body>
+</html>
