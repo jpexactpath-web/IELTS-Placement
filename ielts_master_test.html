@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS Placement Test</title>
 <style>
 /* ══ RESET & BASE ══════════════════════════════════════════════════════════ */
 :root {
@@ -280,30 +281,6 @@ tbody tr:nth-child(even) td{background:#f9f9f9;}
 </style>
 </head>
 <body>
-
-<button onclick="testJSPDF()" style="position:fixed;top:10px;right:10px;z-index:999;padding:10px;background:red;color:white;">TEST PDF</button>
-
-<script>
-function testJSPDF() {
-  console.log('Testing jsPDF...');
-  console.log('window.jspdf:', window.jspdf);
-  
-  if (typeof window.jspdf === 'undefined') {
-    alert('ERROR: jsPDF library not loaded!');
-    return;
-  }
-  
-  try {
-    var testDoc = new window.jspdf.jsPDF();
-    testDoc.text("Test", 10, 10);
-    testDoc.save("test.pdf");
-    alert('SUCCESS! jsPDF is working. The problem is elsewhere.');
-  } catch (e) {
-    alert('ERROR: ' + e.message);
-    console.error(e);
-  }
-}
-</script>
 
 <!-- ══ TOP BAR ═══════════════════════════════════════════════════════════════ -->
 <div class="top-bar">
@@ -771,7 +748,7 @@ function testJSPDF() {
   <!-- SUBMIT BAR -->
   <div class="submit-bar">
     <div class="submit-bar-left">
-        Submitting will download a PDF of your answers.
+        Submitting will download a text file of your answers.
     </div>
     <div style="display:flex;gap:10px;">
       <button class="btn btn-secondary" onclick="if(confirm('Clear all answers? This cannot be undone.'))clearAll()">Clear All</button>
@@ -897,7 +874,6 @@ function countW(id, countId, min) {
 function collectAnswers() {
   var data = {};
   data.name = document.getElementById('sName').value || '(not entered)';
-  data.id = document.getElementById('sID').value || '(not entered)';
   data.date = document.getElementById('sDate').value || '(not entered)';
 
   // Listening text inputs L1-L40
@@ -930,12 +906,45 @@ function collectAnswers() {
   return data;
 }
 
-// ── GENERATE PDF (answers only) ───────────────────────────────────────────────
+// ── GENERATE TEXT FILE (answers only) ─────────────────────────────────────────
+function generatePDF(data) {
+  var content = 'IELTS PLACEMENT TEST - STUDENT ANSWERS\n';
+  content += '='.repeat(60) + '\n\n';
+  content += 'Student: ' + data.name + '\n';
+  content += 'Date: ' + data.date + '\n\n';
+  content += '='.repeat(60) + '\n\n';
+  
+  // LISTENING
+  content += 'LISTENING SECTION\n' + '-'.repeat(60) + '\n\n';
+  content += 'Questions 1-10:\n';
+  for (var i=1; i<=10; i++) content += 'L' + i + ': ' + data['L'+i] + '\n';
+  content += '\nQuestions 11-14 (two answers each):\n';
+  content += 'L11: ' + data.L11_cb + '\nL12: ' + data.L12_cb + '\nL13: ' + data.L13_cb + '\nL14: ' + data.L14_cb + '\n';
+  content += '\nQuestions 15-40:\n';
+  for (var i=15; i<=40; i++) content += 'L' + i + ': ' + data['L'+i] + '\n';
+  
+  // READING
+  content += '\n' + '='.repeat(60) + '\n\n';
+  content += 'READING SECTION\n' + '-'.repeat(60) + '\n\n';
+  content += 'Questions 1-40:\n';
+  for (var i=1; i<=40; i++) content += 'R' + i + ': ' + data['R'+i] + '\n';
+  
+  // WRITING
+  content += '\n' + '='.repeat(60) + '\n\n';
+  content += 'WRITING SECTION\n' + '-'.repeat(60) + '\n\n';
+  content += 'Task 1 Response:\n' + data.W1 + '\n\n';
+  content += 'Task 2 Response:\n' + data.W2 + '\n';
+  
+  return content;
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
 function submitTest() {
   if (!confirm('Submit your test? This will download your answers as a text file.')) return;
-  
+
   var data = collectAnswers();
   
+  // Check if student filled in name
   if (!data.name || data.name === '(not entered)') {
     alert('Please enter your name before submitting.');
     return;
@@ -945,7 +954,7 @@ function submitTest() {
     var content = generatePDF(data);
     var fileName = 'IELTS_' + data.name.replace(/\s+/g,'_') + '_' + (data.date||'answers') + '.txt';
     
-    // Create download
+    // Create download using Blob
     var blob = new Blob([content], {type: 'text/plain'});
     var link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -958,30 +967,6 @@ function submitTest() {
     console.error('Download Error:', error);
   }
 }
-
-// ── SUBMIT ────────────────────────────────────────────────────────────────────
-function submitTest() {
-  if (!confirm('Submit your test? This will download your answers as a PDF.')) return;
-
-  var data = collectAnswers();
-  
-  // Check if student filled in name
-  if (!data.name || data.name === '(not entered)') {
-    alert('Please enter your name before submitting.');
-    return;
-  }
-
-  try {
-    var doc = generatePDF(data);
-    var fileName = 'IELTS_' + data.name.replace(/\s+/g,'_') + '_' + (data.date||'answers') + '.pdf';
-    doc.save(fileName);
-    alert('PDF downloaded successfully! Please submit the file to your teacher.');
-  } catch (error) {
-    alert('Error generating PDF. Please try again or contact support.');
-    console.error('PDF Error:', error);
-  }
-}
-
 
 function clearAll() {
   document.querySelectorAll('input[type=text]').forEach(function(i){i.value='';});
