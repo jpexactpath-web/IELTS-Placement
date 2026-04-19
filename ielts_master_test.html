@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IELTS Placement Test</title><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 <style>
 /* ══ RESET & BASE ══════════════════════════════════════════════════════════ */
 :root {
@@ -932,77 +931,32 @@ function collectAnswers() {
 }
 
 // ── GENERATE PDF (answers only) ───────────────────────────────────────────────
-function generatePDF(data) {
-  var doc = new window.jspdf.jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  var m = 18;
-  var y = 20;
-
-  function hline() {
-    doc.setDrawColor(200); doc.line(m, y, 210-m, y); y+=4;
-  }
-  function h1(txt) {
-    doc.setFont('helvetica','bold'); doc.setFontSize(14);
-    doc.text(txt, m, y); y += 8;
-  }
-  function h2(txt) {
-    doc.setFont('helvetica','bold'); doc.setFontSize(11);
-    doc.text(txt, m, y); y += 6;
-  }
-  function ans(qnum, val) {
-    doc.setFont('helvetica','normal'); doc.setFontSize(10);
-    doc.text(qnum.padEnd(6, ' ') + val, m+4, y);
-    y += 5;
-    if (y > 270) { doc.addPage(); y = 20; }
-  }
-  function body(txt) {
-    doc.setFont('helvetica','normal'); doc.setFontSize(10);
-    var lines = doc.splitTextToSize(txt, 174);
-    lines.forEach(function(line) {
-      doc.text(line, m, y); y += 5;
-      if (y > 270) { doc.addPage(); y = 20; }
-    });
-    y += 3;
+function submitTest() {
+  if (!confirm('Submit your test? This will download your answers as a text file.')) return;
+  
+  var data = collectAnswers();
+  
+  if (!data.name || data.name === '(not entered)') {
+    alert('Please enter your name before submitting.');
+    return;
   }
 
-  // Title
-  doc.setFont('helvetica','bold'); doc.setFontSize(16);
-  doc.text('IELTS Placement Test - Student Answers', m, y); y+=8;
-  hline();
-  doc.setFont('helvetica','normal'); doc.setFontSize(10);
-  doc.text('Student: '+data.name+'  |  ID: '+data.id+'  |  Date: '+data.date, m, y); y+=6;
-  hline(); y+=2;
-
-  // LISTENING
-  h1('LISTENING SECTION');
-  h2('Questions 1-10');
-  for (var i=1; i<=10; i++) ans('L'+i, data['L'+i]);
-  y+=2; h2('Questions 11-14 (two answers each)');
-  ans('L11', data.L11_cb); ans('L12', data.L12_cb);
-  ans('L13', data.L13_cb); ans('L14', data.L14_cb);
-  y+=2; h2('Questions 15-40');
-  for (var i=15; i<=40; i++) ans('L'+i, data['L'+i]);
-  y+=3; hline(); y+=2;
-
-  // READING
-  if (y > 230) { doc.addPage(); y = 20; }
-  h1('READING SECTION');
-  h2('Questions 1-22');
-  for (var i=1; i<=22; i++) ans('R'+i, data['R'+i]);
-  y+=2; h2('Questions 23-40');
-  for (var i=23; i<=40; i++) ans('R'+i, data['R'+i]);
-  y+=3; hline(); y+=2;
-
-  // WRITING
-  if (y > 220) { doc.addPage(); y = 20; }
-  h1('WRITING SECTION');
-  h2('Task 1 Response'); y+=2;
-  body(data.W1);
-  y+=3; hline(); y+=2;
-  if (y > 220) { doc.addPage(); y = 20; }
-  h2('Task 2 Response'); y+=2;
-  body(data.W2);
-
-  return doc;
+  try {
+    var content = generatePDF(data);
+    var fileName = 'IELTS_' + data.name.replace(/\s+/g,'_') + '_' + (data.date||'answers') + '.txt';
+    
+    // Create download
+    var blob = new Blob([content], {type: 'text/plain'});
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    
+    alert('File downloaded successfully! Please submit the file to your teacher.');
+  } catch (error) {
+    alert('Error generating file. Please try again or contact support.');
+    console.error('Download Error:', error);
+  }
 }
 
 // ── SUBMIT ────────────────────────────────────────────────────────────────────
