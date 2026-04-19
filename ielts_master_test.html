@@ -237,8 +237,6 @@ tbody tr:nth-child(even) td{background:#f9f9f9;}
   font-family:'Book Antiqua','Palatino Linotype',Palatino,Georgia,serif;
   font-size:12pt;line-height:2;
   padding:14px 16px;resize:vertical;outline:none;color:var(--black);
-  background-image:repeating-linear-gradient(to bottom,transparent,transparent calc(2em - 1px),#e5e5e5 calc(2em - 1px),#e5e5e5 2em);
-  background-attachment:local;
 }
 .w-area:focus{border-color:var(--black);}
 .w-note{font-size:10pt;color:var(--light);margin-top:5px;font-style:italic;}
@@ -986,27 +984,27 @@ function generatePDF(data) {
 
 // ── SUBMIT ────────────────────────────────────────────────────────────────────
 function submitTest() {
-  if (!confirm('Submit your test? This will download your answers as PDF and open Gmail.')) return;
+  if (!confirm('Submit your test? This will download your answers as a PDF.')) return;
 
   var data = collectAnswers();
-  var doc = generatePDF(data);
-  var fileName = 'IELTS_' + data.name.replace(/\s+/g,'_') + '_' + (data.date||'answers') + '.pdf';
-  doc.save(fileName);
+  
+  // Check if student filled in name
+  if (!data.name || data.name === '(not entered)') {
+    alert('Please enter your name before submitting.');
+    return;
+  }
 
-  // Compact Gmail body
-  var body = 'IELTS Placement Test - Student Answers\n';
-  body += 'Student: ' + data.name + '\nID: ' + data.id + '\nDate: ' + data.date + '\n\n';
-  body += 'LISTENING: See attached PDF for all 40 answers\n';
-  body += 'READING: See attached PDF for all 40 answers\n';
-  body += 'WRITING: See attached PDF for both task responses\n';
-
-  var gmailURL = 'https://mail.google.com/mail/?view=cm&fs=1'
-    + '&to=' + encodeURIComponent(TEACHER_EMAIL)
-    + '&su=' + encodeURIComponent('IELTS Test - ' + data.name + ' (' + data.date + ')')
-    + '&body=' + encodeURIComponent(body);
-
-  setTimeout(function() { window.open(gmailURL, '_blank'); }, 800);
+  try {
+    var doc = generatePDF(data);
+    var fileName = 'IELTS_' + data.name.replace(/\s+/g,'_') + '_' + (data.date||'answers') + '.pdf';
+    doc.save(fileName);
+    alert('PDF downloaded successfully! Please submit the file to your teacher.');
+  } catch (error) {
+    alert('Error generating PDF. Please try again or contact support.');
+    console.error('PDF Error:', error);
+  }
 }
+
 
 function clearAll() {
   document.querySelectorAll('input[type=text]').forEach(function(i){i.value='';});
